@@ -1,4 +1,5 @@
-LeafletWidget.methods.addGlifyPolylinesSrc = function(color, weight, opacity, group, layerId) {
+LeafletWidget.methods.addGlifyPolylinesSrc = function(color, weight, opacity, group, layerId,
+                                                      hover, hoverWait, sensitivity, sensitivityHover, pane) {
 
   var map = this;
 
@@ -18,6 +19,8 @@ LeafletWidget.methods.addGlifyPolylinesSrc = function(color, weight, opacity, gr
     wght = weight;
   }
 
+  var hov = null;
+
   var lineslayer = L.glify.lines({
     map: map,
     click: function (e, feature) {
@@ -26,24 +29,30 @@ LeafletWidget.methods.addGlifyPolylinesSrc = function(color, weight, opacity, gr
       } else if (typeof(popup[layerId]) === "undefined") {
         return;
       } else {
-      if (map.hasLayer(lineslayer.glLayer)) {
+      if (map.hasLayer(lineslayer.layer)) {
           var idx = data[layerId][0].features.findIndex(k => k==feature);
-          L.popup()
+          var pops = L.popup()
             .setLatLng(e.latlng)
-            .setContent(popup[layerId][0][idx].toString())
-            .openOn(map);
+            .setContent(popup[layerId][0][idx].toString());
+
+          map.layerManager.addLayer(pops, "popup");
         }
       }
     },
+    hover: hov,
+    hoverWait: hoverWait,
+    sensitivityHover: sensitivityHover,
+    sensitivity: sensitivity,
     latitudeKey: 1,
     longitudeKey: 0,
     data: data[layerId][0],
     color: clrs,
     opacity: opacity,
     weight: wght,
-    className: group
+    className: group,
+    pane: pane
   });
 
-  map.layerManager.addLayer(lineslayer.glLayer, null, null, group);
+  map.layerManager.addLayer(lineslayer.layer, null, null, group);
 
 };

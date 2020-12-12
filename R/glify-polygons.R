@@ -31,6 +31,10 @@ addGlPolygons = function(map,
                          popup = NULL,
                          layerId = NULL,
                          src = FALSE,
+                         border = FALSE,
+                         hover = NULL,
+                         hoverWait = 250,
+                         pane = "overlayPane",
                          ...) {
 
   if (isTRUE(src)) {
@@ -43,6 +47,10 @@ addGlPolygons = function(map,
       , group = group
       , popup = popup
       , layerId = layerId
+      , border = border
+      , hover = hover
+      , hoverWait = hoverWait
+      , pane = pane
       , ...
     )
     return(m)
@@ -73,6 +81,19 @@ addGlPolygons = function(map,
   colnames(fillColor) = c("r", "g", "b")
 
   cols = jsonify::to_json(fillColor, digits = 3)
+
+  # hover
+  if (!is.null(hover) && !isTRUE(hover)) {
+    htmldeps <- htmltools::htmlDependencies(hover)
+    if (length(htmldeps) != 0) {
+      map$dependencies = c(
+        map$dependencies,
+        htmldeps
+      )
+    }
+    hover = makePopup(hover, data)
+    hover = jsonify::to_json(hover)
+  }
 
   # popup
   if (is.null(popup)) {
@@ -130,6 +151,10 @@ addGlPolygons = function(map,
     , fillOpacity
     , group
     , layerId
+    , border
+    , hover
+    , hoverWait
+    , pane
   )
 
   leaflet::expandLimits(
@@ -151,6 +176,10 @@ addGlPolygonsSrc = function(map,
                             group = "glpolygons",
                             popup = NULL,
                             layerId = NULL,
+                            border = FALSE,
+                            hover = NULL,
+                            hoverWait = 250,
+                            pane = "overlayPane",
                             ...) {
 
   if (is.null(group)) group = deparse(substitute(data))
@@ -244,7 +273,6 @@ addGlPolygonsSrc = function(map,
       map$dependencies,
       glifyPopupAttachmentSrc(fl_popup, layerId)
     )
-
   }
 
   map = leaflet::invokeMethod(
@@ -255,6 +283,10 @@ addGlPolygonsSrc = function(map,
     , fillOpacity
     , group
     , layerId
+    , border
+    , hover
+    , hoverWait
+    , pane
   )
 
   leaflet::expandLimits(

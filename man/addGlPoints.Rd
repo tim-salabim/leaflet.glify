@@ -17,6 +17,11 @@ addGlPolylines(
   weight = 1,
   layerId = NULL,
   src = FALSE,
+  hover = NULL,
+  hoverWait = 250,
+  sensitivity = 0.1,
+  sensitivityHover = 0.03,
+  pane = "overlayPane",
   ...
 )
 
@@ -30,6 +35,11 @@ addGlPoints(
   popup = NULL,
   layerId = NULL,
   src = FALSE,
+  hover = NULL,
+  hoverWait = 250,
+  sensitivity = 0.1,
+  sensitivityHover = 0.03,
+  pane = "overlayPane",
   ...
 )
 
@@ -43,6 +53,10 @@ addGlPolygons(
   popup = NULL,
   layerId = NULL,
   src = FALSE,
+  border = FALSE,
+  hover = NULL,
+  hoverWait = 250,
+  pane = "overlayPane",
   ...
 )
 }
@@ -61,7 +75,7 @@ Note: expect funny results if you set this to < 1.}
 \item{group}{a group name for the feature layer.}
 
 \item{popup}{Object representing the popup. Can be of type character with column names,
-formula, logical, data.frame or matrix, Spatial, list or JSON. If the lenght does not
+formula, logical, data.frame or matrix, Spatial, list or JSON. If the length does not
 match the number of rows in the dataset, the popup vector is repeated to match the dimension.}
 
 \item{weight}{line width/thicknes in pixels for \code{addGlPolylines}.}
@@ -70,13 +84,30 @@ match the number of rows in the dataset, the popup vector is repeated to match t
 
 \item{src}{whether to pass data to the widget via file attachments.}
 
-\item{...}{Passed to \code{\link[jsonify]{to_json}} for the data coordinates.}
+\item{hover}{Object representing the hover. Can be of type character with column names,
+formula, logical, data.frame or matrix, Spatial, list or JSON. If the length does not
+match the number of rows in the dataset, the popup vector is repeated to match the dimension.}
+
+\item{hoverWait}{Amount of milliseconds to wait before the next hover event is triggered.}
+
+\item{sensitivity}{A numeric value which exaggerates the size of the clickable
+area to make it easier to click a point/line.}
+
+\item{sensitivityHover}{A numeric value which exaggerates the size of the hoverable
+area to make it easier to hover a point/line.}
+
+\item{pane}{A string which defines the pane of the layer.}
+
+\item{...}{Passed to \code{\link[jsonify]{to_json}} for the data coordinates,
+except for the \code{palette} argument, which is used for the coloring method.}
 
 \item{fillColor}{fill color.}
 
 \item{fillOpacity}{fill opacity.}
 
 \item{radius}{point size in pixels.}
+
+\item{border}{Boolean value which determines if a border should be drawn.}
 }
 \description{
 Leaflet.glify is a web gl renderer plugin for leaflet. See

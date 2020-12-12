@@ -1,4 +1,4 @@
-LeafletWidget.methods.addGlifyPolygonsSrc = function(fillColor, fillOpacity, group, layerId) {
+LeafletWidget.methods.addGlifyPolygonsSrc = function(fillColor, fillOpacity, group, layerId, border, hover, hoverWait, pane) {
 
   var map = this;
 
@@ -20,21 +20,26 @@ LeafletWidget.methods.addGlifyPolygonsSrc = function(fillColor, fillOpacity, gro
       } else if (typeof(popup[layerId]) === "undefined") {
         return;
       } else {
-      if (map.hasLayer(shapeslayer.glLayer)) {
+      if (map.hasLayer(shapeslayer.layer)) {
           var idx = data[layerId][0].features.findIndex(k => k==feature);
-          L.popup()
+          var pops = L.popup()
             .setLatLng(e.latlng)
-            .setContent(popup[layerId][0][idx].toString())
-            .openOn(map);
+            .setContent(popup[layerId][0][idx].toString());
+
+          map.layerManager.addLayer(pops, "popup");
         }
       }
     },
+    hover: hov,
+    hoverWait: hoverWait,
     data: data[layerId][0],
     color: clrs,
     opacity: fillOpacity,
-    className: group
+    border: border,
+    className: group,
+    pane: pane
   });
 
-  map.layerManager.addLayer(shapeslayer.glLayer, null, null, group);
+  map.layerManager.addLayer(shapeslayer.layer, null, null, group);
 
 };

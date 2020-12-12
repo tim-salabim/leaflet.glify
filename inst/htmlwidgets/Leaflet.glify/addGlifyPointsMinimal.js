@@ -21,11 +21,12 @@ LeafletWidget.methods.addGlifyPointsMinimal = function(data, cols, popup, opacit
       click: function (e, point, xy) {
         var idx = data.findIndex(k => k==point);
         //set up a standalone popup (use a popup as a layer)
-        if (map.hasLayer(pointslayer.glLayer)) {
-          L.popup()
+        if (map.hasLayer(pointslayer.layer)) {
+          var pops = L.popup()
             .setLatLng(point)
-            .setContent(popup[idx].toString())
-            .openOn(map);
+            .setContent(popup[idx].toString());
+
+          map.layerManager.addLayer(pops, "popup");
         }
 
       },
@@ -36,7 +37,7 @@ LeafletWidget.methods.addGlifyPointsMinimal = function(data, cols, popup, opacit
       className: group
     });
 
-  map.layerManager.addLayer(pointslayer.glLayer, "glify", layerId, group);
+  map.layerManager.addLayer(pointslayer.layer, "glify", layerId, group);
 
   //});
 

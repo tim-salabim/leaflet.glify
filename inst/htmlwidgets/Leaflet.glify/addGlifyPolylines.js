@@ -1,4 +1,5 @@
-LeafletWidget.methods.addGlifyPolylines = function(data, cols, popup, opacity, group, weight, layerId) {
+LeafletWidget.methods.addGlifyPolylines = function(data, cols, popup, opacity, group, weight, layerId,
+                                                   hover, hoverWait, sensitivity, sensitivityHover, pane) {
 
   var map = this;
 
@@ -17,12 +18,12 @@ LeafletWidget.methods.addGlifyPolylines = function(data, cols, popup, opacity, g
   }
 
   var click_event = function(e, feature, addpopup, popup) {
-    if (map.hasLayer(lineslayer.glLayer)) {
+    if (map.hasLayer(lineslayer.layer)) {
       var idx = data.features.findIndex(k => k==feature);
       if (HTMLWidgets.shinyMode) {
         Shiny.setInputValue(map.id + "_glify_click", {
           id: layerId ? layerId[idx] : idx+1,
-          group: Object.values(lineslayer.glLayer._eventParents)[0].groupname,
+          group: Object.values(lineslayer.layer._eventParents)[0].groupname,
           lat: e.latlng.lat,
           lng: e.latlng.lng,
           data: feature.properties
@@ -30,31 +31,38 @@ LeafletWidget.methods.addGlifyPolylines = function(data, cols, popup, opacity, g
       }
       if (addpopup) {
         var content = popup === true ? '<pre>'+JSON.stringify(feature.properties,null,' ').replace(/[\{\}"]/g,'')+'</pre>' : popup[idx].toString();
-        L.popup({ maxWidth: 2000 })
-        .setLatLng(e.latlng)
-        .setContent(content)
-        .openOn(map);
+        var pops = L.popup({ maxWidth: 2000 })
+          .setLatLng(e.latlng)
+          .setContent(content);
+
+        map.layerManager.addLayer(pops, "popup");
       }
     }
   };
-
   var pop = function (e, feature) {
     click_event(e, feature, popup !== null, popup);
   };
 
+  var hov = null;
+
   var lineslayer = L.glify.lines({
     map: map,
     click: pop,
+    hover: hov,
+    hoverWait: hoverWait,
+    sensitivityHover: sensitivityHover,
+    sensitivity: sensitivity,
     latitudeKey: 1,
     longitudeKey: 0,
     data: data,
     color: clrs,
     opacity: opacity,
     className: group,
-    weight: wght
+    weight: wght,
+    pane: pane
   });
 
-  map.layerManager.addLayer(lineslayer.glLayer, "glify", layerId, group);
+  map.layerManager.addLayer(lineslayer.layer, "glify", layerId, group);
 };
 
 

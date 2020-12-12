@@ -17,12 +17,23 @@
 #' @param radius point size in pixels.
 #' @param group a group name for the feature layer.
 #' @param popup Object representing the popup. Can be of type character with column names,
-#'   formula, logical, data.frame or matrix, Spatial, list or JSON. If the lenght does not
+#'   formula, logical, data.frame or matrix, Spatial, list or JSON. If the length does not
 #'   match the number of rows in the dataset, the popup vector is repeated to match the dimension.
 #' @param layerId the layer id
 #' @param weight line width/thicknes in pixels for \code{addGlPolylines}.
 #' @param src whether to pass data to the widget via file attachments.
-#' @param ... Passed to \code{\link[jsonify]{to_json}} for the data coordinates.
+#' @param hover Object representing the hover. Can be of type character with column names,
+#'   formula, logical, data.frame or matrix, Spatial, list or JSON. If the length does not
+#'   match the number of rows in the dataset, the popup vector is repeated to match the dimension.
+#' @param hoverWait Amount of milliseconds to wait before the next hover event is triggered.
+#' @param pane A string which defines the pane of the layer.
+#' @param sensitivity A numeric value which exaggerates the size of the clickable
+#'   area to make it easier to click a point/line.
+#' @param sensitivityHover A numeric value which exaggerates the size of the hoverable
+#'   area to make it easier to hover a point/line.
+#' @param border Boolean value which determines if a border should be drawn.
+#' @param ... Passed to \code{\link[jsonify]{to_json}} for the data coordinates,
+#'   except for the \code{palette} argument, which is used for the coloring method.
 #'
 #' @describeIn addGlPoints add points to a leaflet map using Leaflet.glify
 #' @examples
@@ -56,6 +67,11 @@ addGlPoints = function(map,
                        popup = NULL,
                        layerId = NULL,
                        src = FALSE,
+                       hover = NULL,
+                       hoverWait = 250,
+                       sensitivity = 0.1,
+                       sensitivityHover = 0.03,
+                       pane = "overlayPane",
                        ...) {
 
   if (isTRUE(src)) {
@@ -68,6 +84,11 @@ addGlPoints = function(map,
       , group = group
       , popup = popup
       , layerId = layerId
+      , hover = hover
+      , hoverWait = hoverWait
+      , sensitivity = sensitivity
+      , sensitivityHover = sensitivityHover
+      , pane = pane
       , ...
     )
     return(m)
@@ -107,8 +128,19 @@ addGlPoints = function(map,
     }
     popup = makePopup(popup, data)
     popup = jsonify::to_json(popup)
-  } else {
-    popup = NULL
+  }
+
+  # hover
+  if (!is.null(hover)) {
+    htmldeps <- htmltools::htmlDependencies(hover)
+    if (length(htmldeps) != 0) {
+      map$dependencies = c(
+        map$dependencies,
+        htmldeps
+      )
+    }
+    hover = makePopup(hover, data)
+    hover = jsonify::to_json(hover)
   }
 
   # data
@@ -148,6 +180,11 @@ addGlPoints = function(map,
     , radius
     , group
     , layerId
+    , hover
+    , hoverWait
+    , sensitivity
+    , sensitivityHover
+    , pane
   )
 
   leaflet::expandLimits(
@@ -169,6 +206,11 @@ addGlPointsSrc = function(map,
                           group = "glpoints",
                           popup = NULL,
                           layerId = NULL,
+                          hover = NULL,
+                          hoverWait = 250,
+                          sensitivity = 0.1,
+                          sensitivityHover = 0.03,
+                          pane = "overlayPane",
                           ...) {
 
   ## currently leaflet.glify only supports single (fill)opacity!
@@ -301,6 +343,11 @@ addGlPointsSrc = function(map,
     , fillOpacity
     , group
     , layerId
+    , hover
+    , hoverWait
+    , sensitivity
+    , sensitivityHover
+    , pane
   )
 
   leaflet::expandLimits(

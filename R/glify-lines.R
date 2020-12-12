@@ -31,6 +31,11 @@ addGlPolylines = function(map,
                           weight = 1,
                           layerId = NULL,
                           src = FALSE,
+                          hover = NULL,
+                          hoverWait = 250,
+                          sensitivity = 0.1,
+                          sensitivityHover = 0.03,
+                          pane = "overlayPane",
                           ...) {
 
   if (isTRUE(src)) {
@@ -43,6 +48,11 @@ addGlPolylines = function(map,
       , popup = popup
       , weight = weight
       , layerId = layerId
+      , hover = hover
+      , hoverWait = hoverWait
+      , sensitivity = sensitivity
+      , sensitivityHover = sensitivityHover
+      , pane = pane
       , ...
     )
     return(m)
@@ -73,6 +83,19 @@ addGlPolylines = function(map,
   colnames(color) = c("r", "g", "b")
 
   cols = jsonify::to_json(color, digits = 3)
+
+  # hover
+  if (!is.null(hover) && !isTRUE(hover)) {
+    htmldeps <- htmltools::htmlDependencies(hover)
+    if (length(htmldeps) != 0) {
+      map$dependencies = c(
+        map$dependencies,
+        htmldeps
+      )
+    }
+    hover = makePopup(hover, data)
+    hover = jsonify::to_json(hover)
+  }
 
   # popup
   if (is.null(popup)) {
@@ -132,6 +155,11 @@ addGlPolylines = function(map,
     , group
     , weight
     , layerId
+    , hover
+    , hoverWait
+    , sensitivity
+    , sensitivityHover
+    , pane
   )
 
   leaflet::expandLimits(
@@ -152,6 +180,11 @@ addGlPolylinesSrc = function(map,
                              popup = NULL,
                              weight = 1,
                              layerId = NULL,
+                             hover = NULL,
+                             hoverWait = 250,
+                             sensitivity = 0.1,
+                             sensitivityHover = 0.03,
+                             pane = "overlayPane",
                              ...) {
 
   if (is.null(group)) group = deparse(substitute(data))
@@ -275,6 +308,11 @@ addGlPolylinesSrc = function(map,
     , opacity
     , group
     , layerId
+    , hover
+    , hoverWait
+    , sensitivity
+    , sensitivityHover
+    , pane
   )
 
   leaflet::expandLimits(

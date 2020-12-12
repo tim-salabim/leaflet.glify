@@ -17,11 +17,11 @@ LeafletWidget.methods.addGlifyPolygonsFl = function(data_var, color_var, popup_v
 
     if (popup_var) {
         var pop = function (e, feature) {
-          L.popup()
+          var pops = L.popup()
             .setLatLng(e.latlng)
-            .setContent(feature.properties[[popup_var]].toString())
-            .openOn(map);
+            .setContent(feature.properties[[popup_var]].toString());
 
+          map.layerManager.addLayer(pops, "popup");
           console.log(feature);
           console.log(e);
         };

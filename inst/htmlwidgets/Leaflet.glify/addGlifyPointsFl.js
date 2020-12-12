@@ -20,10 +20,11 @@ LeafletWidget.methods.addGlifyPointsFl = function(data_var, color_var, popup_var
       click: function (e, point, xy) {
         var idx = dat.indexOf(point);
         //set up a standalone popup (use a popup as a layer)
-        L.popup()
+        var pops = L.popup()
             .setLatLng(point)
-            .setContent(pop[idx].toString())
-            .openOn(map);
+            .setContent(pop[idx].toString());
+
+        map.layerManager.addLayer(pops, "popup");
 
         console.log(point);
       },
