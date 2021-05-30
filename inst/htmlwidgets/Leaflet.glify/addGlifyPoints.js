@@ -26,7 +26,7 @@ LeafletWidget.methods.addGlifyPoints = function(data, cols, popup, opacity, radi
         var content = popup ? popup[idx].toString() : null;
         if (HTMLWidgets.shinyMode) {
               Shiny.setInputValue(map.id + "_glify_click", {
-                id: layerId ? layerId[idx] : idx+1,
+                id: layerId ? (Array.isArray(layerId) ? layerId[idx] : layerId) : idx+1,
                 group: pointslayer.settings.className,
                 lat: point[0],
                 lng: point[1],

@@ -21,7 +21,7 @@ LeafletWidget.methods.addGlifyPolylines = function(data, cols, popup, opacity, g
       var idx = data.features.findIndex(k => k==feature);
       if (HTMLWidgets.shinyMode) {
         Shiny.setInputValue(map.id + "_glify_click", {
-          id: layerId ? layerId[idx] : idx+1,
+          id: layerId ? (Array.isArray(layerId) ? layerId[idx] : layerId) : idx+1,
           group: Object.values(lineslayer.glLayer._eventParents)[0].groupname,
           lat: e.latlng.lat,
           lng: e.latlng.lng,

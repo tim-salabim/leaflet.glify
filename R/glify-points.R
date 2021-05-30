@@ -205,8 +205,8 @@ addGlPointsSrc = function(map,
   crds = sf::st_coordinates(data)[, c(2, 1)]
 
   ell_args <- list(...)
-  fl_data = paste0(dir_data, "/", layerId, "_data.js")
-  pre = paste0('var data = data || {}; data["', layerId, '"] = ')
+  fl_data = paste0(dir_data, "/", group, "_data.js")
+  pre = paste0('var data = data || {}; data["', group, '"] = ')
   writeLines(pre, fl_data)
   jsonify_args = try(
     match.arg(
@@ -224,7 +224,7 @@ addGlPointsSrc = function(map,
   map$dependencies = c(
     map$dependencies,
     glifyDependenciesSrc(),
-    glifyDataAttachmentSrc(fl_data, layerId)
+    glifyDataAttachmentSrc(fl_data, group)
   )
 
   # color
@@ -238,22 +238,22 @@ addGlPointsSrc = function(map,
   colnames(fillColor) = c("r", "g", "b")
 
   if (nrow(fillColor) > 1) {
-    fl_color = paste0(dir_color, "/", layerId, "_color.js")
-    pre = paste0('var col = col || {}; col["', layerId, '"] = ')
+    fl_color = paste0(dir_color, "/", group, "_color.js")
+    pre = paste0('var col = col || {}; col["', group, '"] = ')
     writeLines(pre, fl_color)
     cat('[', jsonify::to_json(fillColor), '];',
         file = fl_color, append = TRUE)
 
     map$dependencies = c(
       map$dependencies,
-      glifyColorAttachmentSrc(fl_color, layerId)
+      glifyColorAttachmentSrc(fl_color, group)
     )
 
     fillColor = NULL
   }
 
   # popup
-  if (!is.null(popup)) {
+  if (!is.null(popup) && !isFALSE(popup)) {
     htmldeps <- htmltools::htmlDependencies(popup)
     if (length(htmldeps) != 0) {
       map$dependencies = c(
@@ -262,30 +262,30 @@ addGlPointsSrc = function(map,
       )
     }
     popup = makePopup(popup, data)
-    fl_popup = paste0(dir_popup, "/", layerId, "_popup.js")
-    pre = paste0('var popup = popup || {}; popup["', layerId, '"] = ')
+    fl_popup = paste0(dir_popup, "/", group, "_popup.js")
+    pre = paste0('var popups = popups || {}; popups["', group, '"] = ')
     writeLines(pre, fl_popup)
     cat('[', jsonify::to_json(popup), '];',
         file = fl_popup, append = TRUE)
 
     map$dependencies = c(
       map$dependencies,
-      glifyPopupAttachmentSrc(fl_popup, layerId)
+      glifyPopupAttachmentSrc(fl_popup, group)
     )
-
+    popup <- TRUE
   }
 
   # radius
   if (length(unique(radius)) > 1) {
-    fl_radius = paste0(dir_radius, "/", layerId, "_radius.js")
-    pre = paste0('var rad = rad || {}; rad["', layerId, '"] = ')
+    fl_radius = paste0(dir_radius, "/", group, "_radius.js")
+    pre = paste0('var rad = rad || {}; rad["', group, '"] = ')
     writeLines(pre, fl_radius)
     cat('[', jsonify::to_json(radius), '];',
         file = fl_radius, append = TRUE)
 
     map$dependencies = c(
       map$dependencies,
-      glifyRadiusAttachmentSrc(fl_radius, layerId)
+      glifyRadiusAttachmentSrc(fl_radius, group)
     )
 
     radius = NULL
@@ -310,6 +310,7 @@ addGlPointsSrc = function(map,
     , fillOpacity
     , group
     , layerId
+    , popup
   )
 
   leaflet::expandLimits(

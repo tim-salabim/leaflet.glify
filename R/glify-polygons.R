@@ -177,8 +177,8 @@ addGlPolygonsSrc = function(map,
   data = sf::st_sf(id = 1:length(geom), geometry = geom)
 
   ell_args <- list(...)
-  fl_data = paste0(dir_data, "/", layerId, "_data.js")
-  pre = paste0('var data = data || {}; data["', layerId, '"] = ')
+  fl_data = paste0(dir_data, "/", group, "_data.js")
+  pre = paste0('var data = data || {}; data["', group, '"] = ')
   writeLines(pre, fl_data)
   jsonify_args = try(
     match.arg(
@@ -196,7 +196,7 @@ addGlPolygonsSrc = function(map,
   map$dependencies = c(
     map$dependencies,
     glifyDependenciesSrc(),
-    glifyDataAttachmentSrc(fl_data, layerId)
+    glifyDataAttachmentSrc(fl_data, group)
   )
 
   # color
@@ -208,24 +208,23 @@ addGlPolygonsSrc = function(map,
   if (ncol(fillColor) != 3) stop("only 3 column fillColor matrix supported so far")
   fillColor = as.data.frame(fillColor, stringsAsFactors = FALSE)
   colnames(fillColor) = c("r", "g", "b")
-
   if (nrow(fillColor) > 1) {
-    fl_color = paste0(dir_color, "/", layerId, "_color.js")
-    pre = paste0('var col = col || {}; col["', layerId, '"] = ')
+    fl_color = paste0(dir_color, "/", group, "_color.js")
+    pre = paste0('var col = col || {}; col["', group, '"] = ')
     writeLines(pre, fl_color)
     cat('[', jsonify::to_json(fillColor), '];',
         file = fl_color, append = TRUE)
 
     map$dependencies = c(
       map$dependencies,
-      glifyColorAttachmentSrc(fl_color, layerId)
+      glifyColorAttachmentSrc(fl_color, group)
     )
 
     fillColor = NULL
   }
 
   # popup
-  if (!is.null(popup)) {
+  if (!is.null(popup) && !isFALSE(popup)) {
     htmldeps <- htmltools::htmlDependencies(popup)
     if (length(htmldeps) != 0) {
       map$dependencies = c(
@@ -234,17 +233,17 @@ addGlPolygonsSrc = function(map,
       )
     }
     popup = makePopup(popup, data_orig)
-    fl_popup = paste0(dir_popup, "/", layerId, "_popup.js")
-    pre = paste0('var popup = popup || {}; popup["', layerId, '"] = ')
+    fl_popup = paste0(dir_popup, "/", group, "_popup.js")
+    pre = paste0('var popups = popups || {}; popups["', group, '"] = ')
     writeLines(pre, fl_popup)
     cat('[', jsonify::to_json(popup), '];',
         file = fl_popup, append = TRUE)
 
     map$dependencies = c(
       map$dependencies,
-      glifyPopupAttachmentSrc(fl_popup, layerId)
+      glifyPopupAttachmentSrc(fl_popup, group)
     )
-
+    popup <- TRUE
   }
 
   map = leaflet::invokeMethod(
@@ -255,6 +254,7 @@ addGlPolygonsSrc = function(map,
     , fillOpacity
     , group
     , layerId
+    , popup
   )
 
   leaflet::expandLimits(
