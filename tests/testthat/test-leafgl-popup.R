@@ -253,8 +253,7 @@ test_that("popup-points-logical", {
                 popup = FALSE,
                 group = "grp")
   expect_is(m, "leaflet")
-  expect_true(jsonify::validate_json(m$x$calls[[2]]$args[[3]]))
-  expect_true(m$x$calls[[2]]$args[[3]] == "{}")
+  expect_null(m$x$calls[[2]]$args[[3]])
 
   ## NULL #################
   m <- leaflet() %>% addTiles() %>%
@@ -465,8 +464,7 @@ test_that("popup-lines-logical", {
                    popup = FALSE,
                    opacity = 1)
   expect_is(m, "leaflet")
-  expect_true(jsonify::validate_json(m$x$calls[[2]]$args[[3]]))
-  expect_true(m$x$calls[[2]]$args[[3]] == "{}")
+  expect_false(m$x$calls[[2]]$args[[3]])
 
   ## NULL #################
   m <- leaflet() %>% addTiles() %>%
@@ -619,15 +617,13 @@ test_that("popup-polygon-logical", {
                    popup = FALSE,
                    opacity = 1)
   expect_is(m, "leaflet")
-  expect_true(jsonify::validate_json(m$x$calls[[2]]$args[[3]]))
-  expect_true(m$x$calls[[2]]$args[[3]] == "{}")
+  expect_false(m$x$calls[[2]]$args[[3]])
 
   ## NULL #################
   m <- leaflet() %>% addTiles() %>%
     addGlPolygons(data = gadm,
                    popup = NULL,
                    opacity = 1)
-
   expect_is(m, "leaflet")
   expect_true(is.null(m$x$calls[[2]]$args[[3]]))
 })

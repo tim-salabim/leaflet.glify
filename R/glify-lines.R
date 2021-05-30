@@ -75,7 +75,7 @@ addGlPolylines = function(map,
   cols = jsonify::to_json(color, digits = 3)
 
   # popup
-  if (is.null(popup)) {
+  if (is.null(popup) || isFALSE(popup)) {
     # geom = sf::st_transform(sf::st_geometry(data), crs = 4326)
     geom = sf::st_geometry(data)
     data = sf::st_sf(id = 1:length(geom), geometry = geom)

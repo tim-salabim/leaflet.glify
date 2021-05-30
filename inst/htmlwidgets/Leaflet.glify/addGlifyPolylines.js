@@ -39,7 +39,7 @@ LeafletWidget.methods.addGlifyPolylines = function(data, cols, popup, opacity, g
   };
 
   var pop = function (e, feature) {
-    click_event(e, feature, popup !== null, popup);
+    click_event(e, feature, popup !== null && popup !== false, popup);
   };
 
   var lineslayer = L.glify.lines({

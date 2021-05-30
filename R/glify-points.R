@@ -105,7 +105,7 @@ addGlPoints = function(map,
   fillColor = jsonify::to_json(fillColor)
 
   # popup
-  if (!is.null(popup)) {
+  if (!is.null(popup) && !isFALSE(popup)) {
     htmldeps <- htmltools::htmlDependencies(popup)
     if (length(htmldeps) != 0) {
       map$dependencies = c(

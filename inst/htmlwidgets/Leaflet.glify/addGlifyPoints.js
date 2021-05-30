@@ -33,7 +33,7 @@ LeafletWidget.methods.addGlifyPoints = function(data, cols, popup, opacity, radi
                 data: content
               });
         }
-        if (popup !== null) {
+        if (popup !== null && popup !== false) {
           L.popup()
             .setLatLng(point)
             .setContent(content)
