@@ -46,8 +46,3 @@ LeafletWidget.methods.addGlifyPolygons = function(data, cols, popup, opacity, gr
 
   map.layerManager.addLayer(shapeslayer.glLayer, "glify", layerId, group);
 };
-
-
-LeafletWidget.methods.removeGlPolygons = function(layerId) {
-  this.layerManager.removeLayer("glify", layerId);
-};

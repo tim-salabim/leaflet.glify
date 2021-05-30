@@ -58,7 +58,4 @@ LeafletWidget.methods.addGlifyPolylines = function(data, cols, popup, opacity, g
 };
 
 
-LeafletWidget.methods.removeGlPolylines = function(layerId) {
-  this.layerManager.removeLayer("glify", layerId);
-};
 
